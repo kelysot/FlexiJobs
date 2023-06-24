@@ -48,3 +48,16 @@ class CustomHHTPBearer(HTTPBearer):
 oauth2_scheme = CustomHHTPBearer()
 
 
+def is_candidate(request: Request):
+    if not request.state.user["role"] == RoleType.candidate:
+        raise HTTPException(403, "Forbidden")
+
+
+def is_approver(request: Request):
+    if not request.state.user["role"] == RoleType.approver:
+        raise HTTPException(403, "Forbidden")
+
+
+def is_admin(request: Request):
+    if not request.state.user["role"] == RoleType.admin:
+        raise HTTPException(403, "Forbidden")

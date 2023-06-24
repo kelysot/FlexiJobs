@@ -9,3 +9,4 @@ class UserOut(UserBase):
     phone: str
     role: RoleType
     iban: str
+    company: str

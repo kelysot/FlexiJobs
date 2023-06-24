@@ -15,6 +15,6 @@ company = sqlalchemy.Table(
     sqlalchemy.Column("phone", sqlalchemy.String(20), nullable=False),
     sqlalchemy.Column("address", sqlalchemy.String(20), nullable=False),
     sqlalchemy.Column("approvers", sqlalchemy.ARRAY(sqlalchemy.Integer), nullable=False),
-    sqlalchemy.Column("jobs", sqlalchemy.ARRAY(sqlalchemy.Integer), nullable=False),
+    sqlalchemy.Column("jobs", sqlalchemy.ARRAY(sqlalchemy.Integer)),
 
 )
