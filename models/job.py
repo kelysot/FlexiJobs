@@ -7,7 +7,7 @@ job = sqlalchemy.Table(
     "jobs",
     metadata,
     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("title", sqlalchemy.String(120), unique=True),
+    sqlalchemy.Column("title", sqlalchemy.String(120), nullable=False),
     sqlalchemy.Column("description", sqlalchemy.String(255), nullable=False),
     sqlalchemy.Column("location", sqlalchemy.String(200), nullable=False),
     sqlalchemy.Column("hourly_rate", sqlalchemy.String(200), nullable=False),
