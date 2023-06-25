@@ -1,6 +1,6 @@
-from schemas.base import BaseCompany
+from schemas.base import CompanyBase
 
 
-class CompanyOut(BaseCompany):
+class CompanyOut(CompanyBase):
     id: int
     logo_url: str

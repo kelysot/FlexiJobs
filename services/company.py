@@ -45,3 +45,19 @@ class CompanyService:
 
         return await database.fetch_one(company.select().where(company.c.id == id_))
 
+    @staticmethod
+    async def get_company_by_id(company_id):
+        query = company.select().where(company.c.id == company_id)
+        result = await database.fetch_one(query)
+
+        # Check if the user id that the method got exist in the DB.
+        if result is None:
+            raise HTTPException(404, f"The company with ID {company_id} doesn't exist in the DB.")
+
+        return dict(result)
+
+    @staticmethod
+    async def update_company_data(company_id, company_data):
+        await database.execute(
+            company.update().where(company.c.id == company_id).values(**company_data)
+        )
