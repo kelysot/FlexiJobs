@@ -8,7 +8,7 @@ from schemas.response.job import JobOut
 from services.auth import oauth2_scheme, is_approver
 from services.job import JobService
 
-router = APIRouter(tags=["Job"])
+router = APIRouter(tags=["Jobs"])
 
 
 @router.get(

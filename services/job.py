@@ -2,7 +2,7 @@ from http.client import HTTPException
 
 from db import database
 from models import RoleType, job, company_job
-from services.company import CompanyService
+from services.helpers import HelperService
 
 
 class JobService:
@@ -34,11 +34,11 @@ class JobService:
             id_ = await conn._connection.execute(job.insert().values(job_data))
 
             # Update company data in the DB.
-            company_data = await CompanyService.get_company_by_id(job_data["company_id"])
+            company_data = await HelperService.get_company_by_id(job_data["company_id"])
             company_jobs = company_data.get("jobs", [])
             company_jobs.append(id_)
             company_data["jobs"] = company_jobs
-            await CompanyService.update_company_data(company_data["id"], company_data)
+            await HelperService.update_company_data(company_data["id"], company_data)
 
             # Insert data to company_job DB.
             company_job_data = {'company_id': job_data["company_id"], 'job_id': id_}

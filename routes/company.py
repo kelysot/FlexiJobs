@@ -8,7 +8,7 @@ from schemas.response.company import CompanyOut
 from services.auth import oauth2_scheme, is_admin
 from services.company import CompanyService
 
-router = APIRouter(tags=["Company"])
+router = APIRouter(tags=["Companies"])
 
 
 @router.get(
