@@ -22,7 +22,7 @@ async def get_all_companies(request: Request):
 
 
 @router.post(
-    "/complaints/",
+    "/companies/",
     dependencies=[Depends(oauth2_scheme), Depends(is_admin)],
     response_model=CompanyOut,
 )

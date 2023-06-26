@@ -2,24 +2,24 @@ import sqlalchemy
 
 from db import metadata
 from models.enums import RoleType
+from sqlalchemy import Column, ForeignKey, Integer, String, Enum
+
 
 user = sqlalchemy.Table(
     "users",
     metadata,
-    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("email", sqlalchemy.String(120), unique=True),
-    sqlalchemy.Column("password", sqlalchemy.String(255), nullable=False),
-    sqlalchemy.Column("first_name", sqlalchemy.String(200), nullable=False),
-    sqlalchemy.Column("last_name", sqlalchemy.String(200), nullable=False),
-    sqlalchemy.Column("phone", sqlalchemy.String(20), nullable=False),
-    sqlalchemy.Column(
+    Column("id", Integer, primary_key=True),
+    Column("email", String(120), unique=True),
+    Column("password", String(255), nullable=False),
+    Column("first_name", String(200), nullable=False),
+    Column("last_name", String(200), nullable=False),
+    Column("phone", String(20), nullable=False),
+    Column(
         "role",
-        sqlalchemy.Enum(RoleType),
+        Enum(RoleType),
         nullable=False,
         server_default=RoleType.candidate.name,
     ),
-    sqlalchemy.Column("iban", sqlalchemy.String(200), nullable=False),
-    sqlalchemy.Column(
-        "company_id", sqlalchemy.ForeignKey("companies.id"),
-    ),
+    Column("iban", String(200), nullable=False),
+    Column("company_id", ForeignKey("companies.id")),
 )

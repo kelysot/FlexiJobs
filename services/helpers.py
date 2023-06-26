@@ -1,7 +1,7 @@
 from http.client import HTTPException
 
 from db import database
-from models import user, company, company_approver, RoleType
+from models import user, company
 
 
 class HelperService:
@@ -54,19 +54,3 @@ class HelperService:
         await database.execute(
             company.update().where(company.c.id == company_id).values(**company_data)
         )
-
-    # -------------------------------- Company_approver Helper --------------------------------
-    @staticmethod
-    async def get_company_approver_by_user_id(user_id):
-        query = company_approver.select().where(company_approver.c.user_id == user_id)
-        result = await database.fetch_one(query)
-
-        # Check if the user id that the method got exist in the DB.
-        if result is None:
-            raise HTTPException(404, f"The company_approver with the user ID {user_id} doesn't exist in the DB.")
-
-        return dict(result)
-
-    @staticmethod
-    async def delete(user_id):
-        await database.execute(company_approver.delete().where(company_approver.c.user_id == user_id))

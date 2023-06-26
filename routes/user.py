@@ -26,15 +26,6 @@ async def make_approver_with_company(user_id: int, company_id: int):
 
 
 @router.put(
-    "/users/{user_id}/make-approver",
-    dependencies=[Depends(oauth2_scheme), Depends(is_admin)],
-    status_code=204,
-)
-async def make_approver(user_id: int):
-    await UserService.make_approver(user_id)
-
-
-@router.put(
     "/users/{user_id}/remove-approver",
     dependencies=[Depends(oauth2_scheme), Depends(is_admin)],
     status_code=204,

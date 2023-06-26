@@ -2,27 +2,25 @@ import sqlalchemy
 
 from db import metadata
 from models.enums import Category
+from sqlalchemy import Column, ForeignKey, Integer, String, Enum, DateTime, func
+
 
 job = sqlalchemy.Table(
     "jobs",
     metadata,
-    sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
-    sqlalchemy.Column("title", sqlalchemy.String(120), nullable=False),
-    sqlalchemy.Column("description", sqlalchemy.String(255), nullable=False),
-    sqlalchemy.Column("location", sqlalchemy.String(200), nullable=False),
-    sqlalchemy.Column("hourly_rate", sqlalchemy.String(200), nullable=False),
-    sqlalchemy.Column("skills", sqlalchemy.String(200), nullable=False),
-    sqlalchemy.Column("working_hours", sqlalchemy.String(200), nullable=False),
-    sqlalchemy.Column(
-        "company_id", sqlalchemy.ForeignKey("companies.id"), nullable=False
-    ),
-    sqlalchemy.Column(
+    Column("id", Integer, primary_key=True),
+    Column("title", String(120), nullable=False),
+    Column("description", String(255), nullable=False),
+    Column("location", String(200), nullable=False),
+    Column("hourly_rate", String(200), nullable=False),
+    Column("skills", String(200), nullable=False),
+    Column("working_hours", String(200), nullable=False),
+    Column("company_id", ForeignKey("companies.id"), nullable=False),
+    Column(
         "category",
-        sqlalchemy.Enum(Category),
+        Enum(Category),
         nullable=False,
         server_default=Category.other.name,
     ),
-    sqlalchemy.Column(
-        "posted_date", sqlalchemy.DateTime, server_default=sqlalchemy.func.now()
-    ),
+    Column("posted_date", DateTime, server_default=func.now()),
 )

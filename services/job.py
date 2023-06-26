@@ -1,7 +1,7 @@
 from http.client import HTTPException
 
 from db import database
-from models import RoleType, job, company_job
+from models import RoleType, job
 from services.helpers import HelperService
 
 
@@ -23,28 +23,15 @@ class JobService:
         # Check if the approver that created the new job is allowed to do it.
         if user["role"] != RoleType.approver:
             raise HTTPException(400, f"The user {user['id']} role isn't an approver.")
-        if user["company_id"] is None:
-            raise HTTPException(400, f"The approver {user['id']} doesn't have a company that he belongs to.")
 
         job_data["company_id"] = user['company_id']
 
-        # Will create the job, company_job and update company data only if everything is successful.
-        async with database.transaction() as conn:
-            # Insert job data to job DB.
-            id_ = await conn._connection.execute(job.insert().values(job_data))
+        # Insert job data to job DB.
+        id_ = await database.execute(job.insert().values(job_data))
 
-            # Update company data in the DB.
-            company_data = await HelperService.get_company_by_id(job_data["company_id"])
-            company_jobs = company_data.get("jobs", [])
-            company_jobs.append(id_)
-            company_data["jobs"] = company_jobs
-            await HelperService.update_company_data(company_data["id"], company_data)
+        query = job.select().where(job.c.id == id_)
+        result = await database.fetch_one(query)
 
-            # Insert data to company_job DB.
-            company_job_data = {'company_id': job_data["company_id"], 'job_id': id_}
-            await conn._connection.execute(company_job.insert().values(company_job_data))
+        return dict(result)
 
-            query = job.select().where(job.c.id == id_)
-            result = await conn._connection.fetch_one(query)
-
-            return dict(result)
+#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsImV4cCI6MTY4Nzc5MzYwNH0.f4gYWjzT5CYTbw01pKOPLA9ekhR-JWUW8xfyoaxxtn0
