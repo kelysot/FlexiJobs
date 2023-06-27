@@ -1,7 +1,7 @@
 from http.client import HTTPException
 
 from db import database
-from models import user, company
+from models import user, company, job
 
 
 class HelperService:
@@ -54,3 +54,26 @@ class HelperService:
         await database.execute(
             company.update().where(company.c.id == company_id).values(**company_data)
         )
+
+    # -------------------------------- Job Helper --------------------------------
+    @staticmethod
+    async def get_job_by_id(job_id):
+        query = job.select().where(job.c.id == job_id)
+        result = await database.fetch_one(query)
+
+        # Check if the user id that the method got exist in the DB.
+        if result is None:
+            raise HTTPException(404, f"The job with ID {job_id} doesn't exist in the DB.")
+
+        return dict(result)
+
+    @staticmethod
+    async def get_job_user_by_id(job_id, candidate_id):
+        query = job.select().where(job.c.job_id == job_id and job.c.candidate_id == candidate_id)
+        result = await database.fetch_one(query)
+
+        # Check if the user id that the method got exist in the DB.
+        if result is None:
+            raise HTTPException(404, f"The job with ID {job_id} doesn't exist in the DB.")
+
+        return dict(result)

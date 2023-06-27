@@ -33,5 +33,3 @@ class JobService:
         result = await database.fetch_one(query)
 
         return dict(result)
-
-#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsImV4cCI6MTY4Nzc5MzYwNH0.f4gYWjzT5CYTbw01pKOPLA9ekhR-JWUW8xfyoaxxtn0

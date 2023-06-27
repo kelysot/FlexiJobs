@@ -25,3 +25,9 @@ class JobBase(BaseModel):
     skills: str
     category: Category
 
+
+class JobUserBase(BaseModel):
+    job_id: int
+    user_id: int
+
+

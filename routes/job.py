@@ -25,6 +25,7 @@ async def get_all_jobs(request: Request):
     "/jobs/",
     dependencies=[Depends(oauth2_scheme), Depends(is_approver)],
     response_model=JobOut,
+    status_code=201,
 )
 async def create_job(request: Request, job: JobIn):
     user = request.state.user

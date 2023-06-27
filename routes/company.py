@@ -25,6 +25,7 @@ async def get_all_companies(request: Request):
     "/companies/",
     dependencies=[Depends(oauth2_scheme), Depends(is_admin)],
     response_model=CompanyOut,
+    status_code=201,
 )
 async def create_company(request: Request, complaint: CompanyIn):
     # user = request.state.user
