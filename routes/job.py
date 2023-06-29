@@ -30,3 +30,13 @@ async def get_all_jobs(request: Request):
 async def create_job(request: Request, job: JobIn):
     user = request.state.user
     return await JobService.create_job(job.dict(), user)
+
+
+@router.get(
+    "/jobs/{company_id}/get-jobs-by-company-id/",
+    dependencies=[Depends(oauth2_scheme)],
+    response_model=List[JobOut],
+)
+async def get_jobs_by_company_id(request: Request, company_id: int):
+    user = request.state.user
+    return await JobService.get_jobs_by_company_id(company_id)

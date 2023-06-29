@@ -5,7 +5,7 @@ from decouple import config
 
 from APIs.ses import SESService
 from db import database
-from models import RoleType, job_user
+from models import job_user
 from services.helpers import HelperService
 
 ses = SESService()
@@ -35,5 +35,27 @@ class JobUserService:
             f"If our team feels your skills and experience are a good fit for this opportunity, we'll reach out.\n"
             f"We appreciate your interest in working with us!\nSincerely,\n{company['name']} \n",
         )
+
+    @staticmethod
+    async def get_candidates_by_job_id(user, job_id):
+        job = await HelperService.get_job_by_id(job_id)
+
+        # Check if the approver belongs to the company that the job belongs to.
+        if job["company_id"] != user["company_id"]:
+            raise HTTPException(404, f"The approver doesn't belong to the company {job['company_id']} "
+                                     f"that the job {job_id} belongs to.")
+
+        query = job_user.select().where(job_user.c.job_id == job_id)
+        jobs_users_data = await database.fetch_all(query)
+
+        # Check if the user id that the method got exist in the DB.
+        if jobs_users_data is None:
+            raise HTTPException(404, f"The job with ID {job_id} doesn't exist in the DB.")
+
+        # Extract the candidate IDs from the result list.
+        candidate_ids = [row['candidate_id'] for row in jobs_users_data]
+        result = await HelperService.get_users_by_ids(candidate_ids)
+
+        return result
 
 

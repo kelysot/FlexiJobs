@@ -1,3 +1,5 @@
+from typing import Optional
+
 from models import RoleType
 from schemas.base import UserBase
 
@@ -9,4 +11,4 @@ class UserOut(UserBase):
     phone: str
     role: RoleType
     iban: str
-    company: str
+    company: Optional[str] = None

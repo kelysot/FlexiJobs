@@ -2,7 +2,6 @@ from http.client import HTTPException
 
 from db import database
 from models import RoleType, job
-from services.helpers import HelperService
 
 
 class JobService:
@@ -33,3 +32,12 @@ class JobService:
         result = await database.fetch_one(query)
 
         return dict(result)
+
+    @staticmethod
+    async def get_jobs_by_company_id(company_id):
+        query = job.select().where(job.c.company_id == company_id)
+        jobs_data = await database.fetch_all(query)
+
+        return [dict(job_data) for job_data in jobs_data]
+
+
