@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: ca90152e8e49
+Revision ID: 1eb13218cbf0
 Revises: 
-Create Date: 2023-06-26 15:57:07.412123
+Create Date: 2023-06-29 14:42:28.027073
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'ca90152e8e49'
+revision = '1eb13218cbf0'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -37,6 +37,7 @@ def upgrade() -> None:
     sa.Column('hourly_rate', sa.String(length=200), nullable=False),
     sa.Column('skills', sa.String(length=200), nullable=False),
     sa.Column('working_hours', sa.String(length=200), nullable=False),
+    sa.Column('one_time_job', sa.Boolean(), nullable=False),
     sa.Column('company_id', sa.Integer(), nullable=False),
     sa.Column('category', sa.Enum('delivery', 'pet_sitter', 'scooter_charging', 'online_surveys', 'driver', 'translation', 'photography', 'cleaning', 'tutor', 'security_officer', 'nanny', 'other', name='category'), server_default='other', nullable=False),
     sa.Column('posted_date', sa.DateTime(), server_default=sa.text('now()'), nullable=True),
@@ -60,6 +61,9 @@ def upgrade() -> None:
     op.create_table('jobs_users',
     sa.Column('job_id', sa.Integer(), nullable=False),
     sa.Column('candidate_id', sa.Integer(), nullable=False),
+    sa.Column('status', sa.Enum('pending', 'approved', 'rejected', name='status'), server_default='pending', nullable=False),
+    sa.Column('start_day', sa.DateTime(), nullable=True),
+    sa.Column('salary_day', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['candidate_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['job_id'], ['jobs.id'], ),
     sa.PrimaryKeyConstraint('job_id', 'candidate_id')

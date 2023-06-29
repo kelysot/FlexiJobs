@@ -28,3 +28,12 @@ async def create_job_user(request: Request, job_id: int):
 async def get_candidates_by_job_id(request: Request, job_id: int):
     user = request.state.user
     return await JobUserService.get_candidates_by_job_id(user, job_id)
+
+
+# @router.put(
+#     "/jobs_users/{candidate_id}/approve",
+#     dependencies=[Depends(oauth2_scheme), Depends(is_approver)],
+#     status_code=204,
+# )
+# async def approve_candidate(candidate_id: int):
+#     await JobUserService.approve(candidate_id)

@@ -2,7 +2,7 @@ import sqlalchemy
 
 from db import metadata
 from models.enums import Category
-from sqlalchemy import Column, ForeignKey, Integer, String, Enum, DateTime, func
+from sqlalchemy import Column, ForeignKey, Integer, String, Enum, DateTime, func, Boolean
 
 
 job = sqlalchemy.Table(
@@ -15,6 +15,7 @@ job = sqlalchemy.Table(
     Column("hourly_rate", String(200), nullable=False),
     Column("skills", String(200), nullable=False),
     Column("working_hours", String(200), nullable=False),
+    Column("one_time_job", Boolean, nullable=False),
     Column("company_id", ForeignKey("companies.id"), nullable=False),
     Column(
         "category",

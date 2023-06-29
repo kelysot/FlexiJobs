@@ -20,3 +20,9 @@ class Category(enum.Enum):
     security_officer = "security_officer"
     nanny = "nanny"
     other = "other"
+
+
+class Status(enum.Enum):
+    pending = "pending"
+    approved = "approved"
+    rejected = "rejected"

@@ -5,7 +5,7 @@ from decouple import config
 
 from APIs.ses import SESService
 from db import database
-from models import job_user
+from models import job_user, Status, user
 from services.helpers import HelperService
 
 ses = SESService()
@@ -18,7 +18,7 @@ class JobUserService:
         job = await HelperService.get_job_by_id(job_id)
         company = await HelperService.get_company_by_id(job["company_id"])
 
-        job_user_data = {'job_id': job_id, 'candidate_id': user["id"]}
+        job_user_data = {'job_id': job_id, 'candidate_id': user["id"], 'status': Status.pending}
 
         # Insert job_user data to job DB.
         try:
@@ -57,5 +57,11 @@ class JobUserService:
         result = await HelperService.get_users_by_ids(candidate_ids)
 
         return result
+
+    # @staticmethod
+    # async def approve(candidate_id):
+    #
+
+
 
 

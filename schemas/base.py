@@ -1,3 +1,5 @@
+from xmlrpc.client import boolean
+
 from pydantic import BaseModel
 
 from models import Category
@@ -23,6 +25,7 @@ class JobBase(BaseModel):
     skills: str
     working_hours: str
     skills: str
+    one_time_job: boolean
     category: Category
 
 
