@@ -10,3 +10,4 @@ class JobUserIn(JobUserBase):
 class JobUserApprove(JobUserBase):
     start_day: date
     salary_day: date
+    amount: float

@@ -64,12 +64,15 @@ class JobUserService:
     @staticmethod
     async def approve(approver, job_user_data):
         # Find the all data about the job, the candidate, and the company.
-        job, candidate, company = HelperService.get_job_candidate_company_data(job_user_data)
+        job, candidate, company = await HelperService.get_job_candidate_company_data(job_user_data)
 
         # Check if the approver belongs to the company that the job belongs to.
         if job["company_id"] != approver["company_id"]:
             raise HTTPException(404, f"The approver doesn't belong to the company {job['company_id']} "
                                      f"that the job {job_user_data['job_id']} belongs to.")
+
+        if job_user_data["amount"] == 0:
+            raise HTTPException(404, f"The approver didn't write an amount.")
 
         # Update the job_user data in the DB.
         await database.execute(
@@ -77,7 +80,7 @@ class JobUserService:
             .where(job_user.c.job_id == job_user_data["job_id"])
             .where(job_user.c.candidate_id == job_user_data["candidate_id"])
             .values(status=Status.approved, start_day=job_user_data["start_day"],
-                    salary_day=job_user_data["salary_day"], )
+                    salary_day=job_user_data["salary_day"], amount=job_user_data["amount"])
         )
 
         # Email the candidate to tell him that he got the job.
@@ -122,5 +125,5 @@ class JobUserService:
             f"{company['name']}",
         )
 
-#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImV4cCI6MTY4ODM4NDQ3MH0.yuV4bu8jNdOYsauvukmKHn_bMw47jnICD2l2Nw7r5Ic
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImV4cCI6MTY4ODM4NDQ3MH0.yuV4bu8jNdOYsauvukmKHn_bMw47jnICD2l2Nw7r5Ic
 

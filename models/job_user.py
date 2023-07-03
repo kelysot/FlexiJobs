@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, ForeignKey, DateTime, Enum, Date
+from sqlalchemy import Table, Column, ForeignKey, Enum, Date, Float
 
 from db import metadata
 from models.enums import Status
@@ -16,5 +16,6 @@ job_user = Table(
     ),
     Column("start_day", Date, nullable=True),
     Column("salary_day", Date, nullable=True),
+    Column("amount", Float, nullable=True),
 
 )

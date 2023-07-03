@@ -1,7 +1,7 @@
 from http.client import HTTPException
 
 from db import database
-from models import user, company, job
+from models import user, company, job, job_user
 
 
 class HelperService:
@@ -75,7 +75,7 @@ class HelperService:
         await HelperService.get_user_by_id(candidate_id)
         await HelperService.get_job_by_id(job_id)
 
-        query = job.select().where(job.c.job_id == job_id and job.c.candidate_id == candidate_id)
+        query = job_user.select().where(job_user.c.job_id == job_id).where(job_user.c.candidate_id == candidate_id)
         result = await database.fetch_one(query)
 
         # Check if the candidate applied to the job.
