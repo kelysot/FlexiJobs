@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from starlette.requests import Request
 
-from schemas.request.job_user import JobUserApprove
+from schemas.request.job_user import JobUserApprove, JobUserIn
 from schemas.response.user import UserOut
 from services.auth import oauth2_scheme, is_candidate, is_approver
 from services.job_user import JobUserService
@@ -39,3 +39,13 @@ async def get_candidates_by_job_id(request: Request, job_id: int):
 async def approve_candidate(request: Request, job_user: JobUserApprove):
     approver = request.state.user
     await JobUserService.approve(approver, job_user.dict())
+
+
+@router.put(
+    "/jobs_users/{candidate_id}/reject",
+    dependencies=[Depends(oauth2_scheme), Depends(is_approver)],
+    status_code=204,
+)
+async def reject_candidate(request: Request, job_user: JobUserIn):
+    approver = request.state.user
+    await JobUserService.reject(approver, job_user.dict())

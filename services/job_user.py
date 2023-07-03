@@ -64,9 +64,7 @@ class JobUserService:
     @staticmethod
     async def approve(approver, job_user_data):
         # Find the all data about the job, the candidate, and the company.
-        job = await HelperService.get_job_by_id(job_user_data["job_id"])
-        candidate = await HelperService.get_user_by_id(job_user_data["candidate_id"])
-        company = await HelperService.get_company_by_id(job['company_id'])
+        job, candidate, company = HelperService.get_job_candidate_company_data(job_user_data)
 
         # Check if the approver belongs to the company that the job belongs to.
         if job["company_id"] != approver["company_id"]:
@@ -79,7 +77,7 @@ class JobUserService:
             .where(job_user.c.job_id == job_user_data["job_id"])
             .where(job_user.c.candidate_id == job_user_data["candidate_id"])
             .values(status=Status.approved, start_day=job_user_data["start_day"],
-                    salary_day=job_user_data["salary_day"],)
+                    salary_day=job_user_data["salary_day"], )
         )
 
         # Email the candidate to tell him that he got the job.
@@ -94,6 +92,35 @@ class JobUserService:
             f"{company['name']}",
         )
 
+    @staticmethod
+    async def reject(approver, job_user_data):
+        # Find the all data about the job, the candidate, and the company.
+        job, candidate, company = await HelperService.get_job_candidate_company_data(job_user_data)
 
+        # Check if the approver belongs to the company that the job belongs to.
+        if job["company_id"] != approver["company_id"]:
+            raise HTTPException(404, f"The approver doesn't belong to the company {job['company_id']} "
+                                     f"that the job {job_user_data['job_id']} belongs to.")
 
+        # Update the job_user data in the DB.
+        await database.execute(
+            job_user.update()
+            .where(job_user.c.job_id == job_user_data["job_id"])
+            .where(job_user.c.candidate_id == job_user_data["candidate_id"])
+            .values(status=Status.rejected)
+        )
+
+        # Email the candidate to tell him that he got the job.
+        ses.send_mail(
+            f"Thank you for applying for the {job['title']} position at {company['name']}",
+            [config("EMAIL_SENDER")],
+            f"Dear {candidate['first_name']},\n\n"
+            f"Thank you very much for applying to our {job['title']} position at {company['name']}!\n"
+            f"Unfortunately, after a thorough review of your CV, we are unable to offer you a position that matches your skills.\n"
+            f"Thank you again for your interest in {company['name']}, and we wish you success in your future endeavors.\n"
+            f"Sincerely yours,\n \n "
+            f"{company['name']}",
+        )
+
+#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImV4cCI6MTY4ODM4NDQ3MH0.yuV4bu8jNdOYsauvukmKHn_bMw47jnICD2l2Nw7r5Ic
 

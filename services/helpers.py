@@ -67,13 +67,31 @@ class HelperService:
 
         return dict(result)
 
+    # -------------------------------- Job User Helper --------------------------------
+
     @staticmethod
     async def get_job_user_by_id(job_id, candidate_id):
+        # Check if the candidate_id and job_id that the method got exist in the DB.
+        await HelperService.get_user_by_id(candidate_id)
+        await HelperService.get_job_by_id(job_id)
+
         query = job.select().where(job.c.job_id == job_id and job.c.candidate_id == candidate_id)
         result = await database.fetch_one(query)
 
-        # Check if the user id that the method got exist in the DB.
+        # Check if the candidate applied to the job.
         if result is None:
-            raise HTTPException(404, f"The job with ID {job_id} doesn't exist in the DB.")
+            raise HTTPException(404, f"The candidate {candidate_id} didn't apply for the job with the ID {job_id}.")
 
         return dict(result)
+
+    @staticmethod
+    async def get_job_candidate_company_data(job_user_data):
+        # Check if the candidate_id and job_id that the method got exist in the DB.
+        await HelperService.get_job_user_by_id(job_user_data['job_id'], job_user_data['candidate_id'])
+
+        # Find the all data about the job, the candidate, and the company.
+        job_data = await HelperService.get_job_by_id(job_user_data["job_id"])
+        candidate_data = await HelperService.get_user_by_id(job_user_data["candidate_id"])
+        company_data = await HelperService.get_company_by_id(job_data['company_id'])
+
+        return job_data, candidate_data, company_data
