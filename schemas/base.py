@@ -31,6 +31,6 @@ class JobBase(BaseModel):
 
 class JobUserBase(BaseModel):
     job_id: int
-    user_id: int
+    candidate_id: int
 
 

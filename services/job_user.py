@@ -1,11 +1,14 @@
+from datetime import datetime, timezone
 from http.client import HTTPException
 
+import pytz
 from asyncpg import UniqueViolationError
 from decouple import config
+from sqlalchemy import DateTime
 
 from APIs.ses import SESService
 from db import database
-from models import job_user, Status, user
+from models import job_user, Status
 from services.helpers import HelperService
 
 ses = SESService()
@@ -58,9 +61,38 @@ class JobUserService:
 
         return result
 
-    # @staticmethod
-    # async def approve(candidate_id):
-    #
+    @staticmethod
+    async def approve(approver, job_user_data):
+        # Find the all data about the job, the candidate, and the company.
+        job = await HelperService.get_job_by_id(job_user_data["job_id"])
+        candidate = await HelperService.get_user_by_id(job_user_data["candidate_id"])
+        company = await HelperService.get_company_by_id(job['company_id'])
+
+        # Check if the approver belongs to the company that the job belongs to.
+        if job["company_id"] != approver["company_id"]:
+            raise HTTPException(404, f"The approver doesn't belong to the company {job['company_id']} "
+                                     f"that the job {job_user_data['job_id']} belongs to.")
+
+        # Update the job_user data in the DB.
+        await database.execute(
+            job_user.update()
+            .where(job_user.c.job_id == job_user_data["job_id"])
+            .where(job_user.c.candidate_id == job_user_data["candidate_id"])
+            .values(status=Status.approved, start_day=job_user_data["start_day"],
+                    salary_day=job_user_data["salary_day"],)
+        )
+
+        # Email the candidate to tell him that he got the job.
+        ses.send_mail(
+            f"Welcome to {company['name']} {candidate['first_name']}!",
+            [config("EMAIL_SENDER")],
+            f"Dear {candidate['first_name']},\n\n"
+            f"On behalf of the entire team at {company['name']}, I am thrilled to extend a warm welcome to you!\n "
+            f"We are delighted that you have accepted our job offer for the position of {job['title']}.\n\n  "
+            f"Warm regards,\n \n "
+            f"{approver['first_name']}\n "
+            f"{company['name']}",
+        )
 
 
 

@@ -27,6 +27,6 @@ async def get_all_companies(request: Request):
     response_model=CompanyOut,
     status_code=201,
 )
-async def create_company(request: Request, complaint: CompanyIn):
+async def create_company(request: Request, company: CompanyIn):
     # user = request.state.user
-    return await CompanyService.create_company(complaint.dict())
+    return await CompanyService.create_company(company.dict())
